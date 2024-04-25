@@ -1,6 +1,6 @@
 package com.studyStorm.config;
 
-import com.studyStorm.entity.UserInfo;
+import com.studyStorm.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +17,7 @@ public class UserInfoUserDetails implements UserDetails {
     private String password;
     private List<GrantedAuthority> authorities;
 
-    public UserInfoUserDetails(UserInfo userInfo) {
+    public UserInfoUserDetails(User userInfo) {
         email=userInfo.getEmail();
         password=userInfo.getPassword();
         authorities= Arrays.stream(userInfo.getRoles().split(","))

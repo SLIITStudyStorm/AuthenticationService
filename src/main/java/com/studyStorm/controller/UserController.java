@@ -1,7 +1,7 @@
 package com.studyStorm.controller;
 
 import com.studyStorm.dto.AuthRequest;
-import com.studyStorm.entity.UserInfo;
+import com.studyStorm.entity.User;
 import com.studyStorm.service.JwtService;
 import com.studyStorm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping("/new")
-    public String addNewUser(@RequestBody UserInfo userInfo){
+    public String addNewUser(@RequestBody User userInfo){
         return service.addUser(userInfo);
     }
 
