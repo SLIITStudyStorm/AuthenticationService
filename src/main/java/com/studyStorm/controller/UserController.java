@@ -1,9 +1,15 @@
 package com.studyStorm.controller;
 
+import com.studyStorm.dto.AuthRequest;
 import com.studyStorm.entity.UserInfo;
-import com.studyStorm.service.ProductService;
+import com.studyStorm.service.JwtService;
+import com.studyStorm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,9 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    private ProductService service;
+    private UserService service;
+    @Autowired
+    private JwtService jwtService;
 
-    @GetMapping("/welcome")
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @GetMapping("/home")
     public String welcome() {
         return "Welcome this endpoint is not secure";
     }
@@ -27,6 +38,18 @@ public class UserController {
     @PostMapping("/new")
     public String addNewUser(@RequestBody UserInfo userInfo){
         return service.addUser(userInfo);
+    }
+
+    @PostMapping("/login")
+    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(authRequest.getUsername());
+        } else {
+            throw new UsernameNotFoundException("invalid user request !");
+        }
+
+
     }
 
 }

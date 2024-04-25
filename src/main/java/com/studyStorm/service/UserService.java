@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductService {
+public class UserService {
 
     @Autowired
     private UserInfoRepository repository;
