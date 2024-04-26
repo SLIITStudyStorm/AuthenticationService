@@ -1,8 +1,12 @@
 package com.studyStorm.controller;
 
 import com.studyStorm.dto.AuthRequest;
+import com.studyStorm.dto.JwtResponse;
+import com.studyStorm.dto.RefreshTokenRequest;
+import com.studyStorm.entity.RefreshToken;
 import com.studyStorm.entity.User;
 import com.studyStorm.service.JwtService;
+import com.studyStorm.service.RefreshTokenService;
 import com.studyStorm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +28,9 @@ public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
     @GetMapping("/home")
     public String welcome() {
         return "Welcome this endpoint is not secure";
@@ -41,15 +48,37 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+    public JwtResponse authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername()
+                , authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getUsername());
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getUsername());
+            jwtService.generateToken(authRequest.getUsername());
+            return JwtResponse.builder()
+                    .accessToken(jwtService.generateToken(authRequest.getUsername()))
+                    .token(refreshToken.getToken())
+                    .build();
         } else {
             throw new UsernameNotFoundException("invalid user request !");
         }
 
+    }
 
+    @PostMapping("/refreshToken")
+    public JwtResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return refreshTokenService.findByToken(refreshTokenRequest.getToken())
+                  .map(refreshTokenService::verifyExpiration)
+                  .map(RefreshToken::getUser)
+                  .map(user -> {
+                      String accessToken = jwtService.generateToken(user.getEmail());
+                        return JwtResponse.builder()
+                                .accessToken(accessToken)
+                                .token(refreshTokenRequest.getToken())
+                                .build();
+                  }).orElseThrow(() -> new RuntimeException("Invalid refresh Token"));
     }
 
 }
+
+
+
