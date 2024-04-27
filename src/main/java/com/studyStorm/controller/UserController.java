@@ -49,13 +49,15 @@ public class UserController {
 
     @PostMapping("/login")
     public JwtResponse authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+        User user = service.findByEmail(authRequest.getUsername());
+
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername()
                 , authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getUsername());
-            jwtService.generateToken(authRequest.getUsername());
+            jwtService.generateToken(authRequest.getUsername(), user.getRoles());
             return JwtResponse.builder()
-                    .accessToken(jwtService.generateToken(authRequest.getUsername()))
+                    .accessToken(jwtService.generateToken(authRequest.getUsername(), user.getRoles()))
                     .token(refreshToken.getToken())
                     .build();
         } else {
@@ -70,7 +72,7 @@ public class UserController {
                   .map(refreshTokenService::verifyExpiration)
                   .map(RefreshToken::getUser)
                   .map(user -> {
-                      String accessToken = jwtService.generateToken(user.getEmail());
+                      String accessToken = jwtService.generateToken(user.getEmail(), user.getRoles());
                         return JwtResponse.builder()
                                 .accessToken(accessToken)
                                 .token(refreshTokenRequest.getToken())
