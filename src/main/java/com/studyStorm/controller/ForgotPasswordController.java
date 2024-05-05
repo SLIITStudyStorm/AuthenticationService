@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Random;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/forgotPassword")
 public class ForgotPasswordController {
 
