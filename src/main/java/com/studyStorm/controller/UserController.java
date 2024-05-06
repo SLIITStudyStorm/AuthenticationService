@@ -49,6 +49,12 @@ public class UserController {
         return service.addUser(userInfo);
     }
 
+    @PostMapping("/auth/admin/users")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public String addNewUserByAdmin(@RequestBody AddUserRequest userInfo){
+        return service.addUser(userInfo);
+    }
+
     @PostMapping("/login")
     public JwtResponse authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
         User user = service.findByEmail(authRequest.getUsername());
