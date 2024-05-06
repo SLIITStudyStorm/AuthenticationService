@@ -1,5 +1,6 @@
 package com.studyStorm.controller;
 
+import com.studyStorm.dto.AddUserRequest;
 import com.studyStorm.dto.AuthRequest;
 import com.studyStorm.dto.JwtResponse;
 import com.studyStorm.dto.RefreshTokenRequest;
@@ -44,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping("/new")
-    public String addNewUser(@RequestBody User userInfo){
+    public String addNewUser(@RequestBody AddUserRequest userInfo){
         return service.addUser(userInfo);
     }
 
