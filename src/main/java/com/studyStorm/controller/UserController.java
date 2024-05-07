@@ -74,11 +74,12 @@ public class UserController {
 
     }
 
-//    get user by email
-    @GetMapping("/user/{email}")
-    public User getUserByEmail(@PathVariable String email) {
-        return service.findByEmail(email);
+//    get user details from token
+    @GetMapping("/user")
+    public User getUserDetails(@RequestHeader("Authorization") String token) {
+        return service.findByEmail(jwtService.getEmailFromToken(token));
     }
+
 
 
     @PostMapping("/refreshToken")
