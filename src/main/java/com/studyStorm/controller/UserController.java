@@ -74,6 +74,13 @@ public class UserController {
 
     }
 
+//    get user by email
+    @GetMapping("/user/{email}")
+    public User getUserByEmail(@PathVariable String email) {
+        return service.findByEmail(email);
+    }
+
+
     @PostMapping("/refreshToken")
     public JwtResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         return refreshTokenService.findByToken(refreshTokenRequest.getToken())
