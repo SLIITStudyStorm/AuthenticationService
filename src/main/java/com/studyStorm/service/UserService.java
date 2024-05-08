@@ -2,6 +2,7 @@ package com.studyStorm.service;
 
 
 import com.studyStorm.dto.AddUserRequest;
+import com.studyStorm.dto.UpdateUserRequest;
 import com.studyStorm.entity.User;
 import com.studyStorm.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,5 +106,55 @@ public class UserService {
     public User findByEmail(String username) {
         return repository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    public String updateUser(String email, UpdateUserRequest userInfo) {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (userInfo.firstName() != null && !userInfo.firstName().isEmpty()) {
+            if (!userInfo.firstName().equals(user.getFirstName())) {
+                user.setFirstName(userInfo.firstName());
+            }
+        }
+
+        if (userInfo.lastName() != null && !userInfo.lastName().isEmpty()) {
+            if (!userInfo.lastName().equals(user.getLastName())) {
+                user.setLastName(userInfo.lastName());
+            }
+        }
+
+        if (userInfo.email() != null && !userInfo.email().isEmpty()) {
+            if (!userInfo.email().equals(user.getEmail())) {
+//                check email is already exist
+                if (repository.findByEmail(userInfo.email()).isPresent()) {
+                    return "Email already exists";
+                }
+                if (isValidEmail(userInfo.email())) {
+                    user.setEmail(userInfo.email());
+                } else {
+                    return "Invalid Email format";
+                }
+            }
+        }
+
+        if (userInfo.phoneNumber() != null && !userInfo.phoneNumber().isEmpty()) {
+            if (!userInfo.phoneNumber().equals(user.getPhoneNumber())) {
+//              check phone number is already exist
+                if (repository.findByPhoneNumber(userInfo.phoneNumber()).isPresent()) {
+                    return "Phone Number already exists";
+                }
+                if (isValidPhoneNumber(userInfo.phoneNumber())) {
+                    user.setPhoneNumber(userInfo.phoneNumber());
+                } else {
+                    return "Invalid Phone Number format";
+                }
+            }
+
+            repository.save(user);
+            return "User updated successfully";
+        }
+
+        return "User updated successfully";
     }
 }

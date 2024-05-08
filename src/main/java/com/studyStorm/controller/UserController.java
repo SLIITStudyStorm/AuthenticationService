@@ -1,9 +1,6 @@
 package com.studyStorm.controller;
 
-import com.studyStorm.dto.AddUserRequest;
-import com.studyStorm.dto.AuthRequest;
-import com.studyStorm.dto.JwtResponse;
-import com.studyStorm.dto.RefreshTokenRequest;
+import com.studyStorm.dto.*;
 import com.studyStorm.entity.RefreshToken;
 import com.studyStorm.entity.User;
 import com.studyStorm.service.JwtService;
@@ -48,6 +45,25 @@ public class UserController {
     public String addNewUser(@RequestBody AddUserRequest userInfo){
         return service.addUser(userInfo);
     }
+
+//    update user by email
+    @PatchMapping("/user/{email}")
+    public String updateUser(@PathVariable String email, @RequestBody UpdateUserRequest userInfo){
+        return service.updateUser(email, userInfo);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @PostMapping("/auth/admin/users")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
