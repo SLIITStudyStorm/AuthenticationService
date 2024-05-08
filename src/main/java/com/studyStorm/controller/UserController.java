@@ -54,6 +54,12 @@ public class UserController {
         return service.updateUser(email, userInfo);
     }
 
+//    change password by email
+    @PatchMapping("/user/userProfile/updatePassword/{email}")
+    public String changePassword(@PathVariable String email, @RequestBody ChangePasswordRequest changePasswordRequest){
+        return service.changePassword(email, changePasswordRequest);
+    }
+
 
 
     @PostMapping("/auth/admin/users")
@@ -102,6 +108,7 @@ public class UserController {
                                 .build();
                   }).orElseThrow(() -> new RuntimeException("Invalid refresh Token"));
     }
+
 
 }
 

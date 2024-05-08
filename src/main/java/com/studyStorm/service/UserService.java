@@ -2,6 +2,7 @@ package com.studyStorm.service;
 
 
 import com.studyStorm.dto.AddUserRequest;
+import com.studyStorm.dto.ChangePasswordRequest;
 import com.studyStorm.dto.UpdateUserRequest;
 import com.studyStorm.entity.User;
 import com.studyStorm.repository.UserRepository;
@@ -151,14 +152,49 @@ public class UserService {
                 }
             }
 
-            repository.save(user);
-            return "User updated successfully";
         }
 
+        repository.save(user);
         return "User updated successfully";
+
     }
 
     public Iterable<User> getAllUsers() {
         return repository.findAll();
+    }
+
+    public String changePassword(String email, ChangePasswordRequest changePasswordRequest) {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+//      check current password is required
+        if (changePasswordRequest.currentPassword() == null || changePasswordRequest.currentPassword().isEmpty()) {
+            return "Current Password is required";
+        }
+
+//      check new password is required
+        if (changePasswordRequest.newPassword() == null || changePasswordRequest.newPassword().isEmpty()) {
+            return "New Password is required";
+        }
+
+//      check confirm password is required
+        if (changePasswordRequest.confirmPassword() == null || changePasswordRequest.confirmPassword().isEmpty()) {
+            return "Confirm Password is required";
+        }
+
+//      check current password is correct
+        if (!passwordEncoder.matches(changePasswordRequest.currentPassword(), user.getPassword())) {
+            return "Current Password is incorrect";
+        }
+
+//      check new password and confirm password are same
+        if (!changePasswordRequest.newPassword().equals(changePasswordRequest.confirmPassword())) {
+            return "New Password and Confirm Password do not match";
+        }
+
+//      update password
+        repository.updatePassword(email, passwordEncoder.encode(changePasswordRequest.newPassword()));
+        return "Password changed successfully";
+
     }
 }
