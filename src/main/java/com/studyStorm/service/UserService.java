@@ -157,4 +157,8 @@ public class UserService {
 
         return "User updated successfully";
     }
+
+    public Iterable<User> getAllUsers() {
+        return repository.findAll();
+    }
 }

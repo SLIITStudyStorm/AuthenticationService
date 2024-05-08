@@ -35,11 +35,13 @@ public class UserController {
         return "Welcome this endpoint is not secure";
     }
 
+//    get all users
     @GetMapping("/auth/users")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public String getAllUsers() {
-        return "authenticated and authorized";
+    public Iterable<User> getAllUsers(){
+        return service.getAllUsers();
     }
+
 
     @PostMapping("/new")
     public String addNewUser(@RequestBody AddUserRequest userInfo){
@@ -51,17 +53,6 @@ public class UserController {
     public String updateUser(@PathVariable String email, @RequestBody UpdateUserRequest userInfo){
         return service.updateUser(email, userInfo);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
