@@ -197,4 +197,13 @@ public class UserService {
         return "Password changed successfully";
 
     }
+
+    public String deleteUser(Integer id) {
+        if (repository.findById(id).isPresent()) {
+            repository.deleteById(id);
+            return "User deleted successfully";
+        } else {
+            return "User not found";
+        }
+    }
 }

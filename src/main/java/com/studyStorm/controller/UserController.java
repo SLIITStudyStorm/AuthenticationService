@@ -60,6 +60,12 @@ public class UserController {
         return service.changePassword(email, changePasswordRequest);
     }
 
+//    delete user by id
+    @DeleteMapping("/user/{id}")
+    public String deleteUser(@PathVariable Integer id){
+        return service.deleteUser(id);
+    }
+
 
 
     @PostMapping("/auth/admin/users")
