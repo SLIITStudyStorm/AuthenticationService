@@ -1,38 +1,29 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:latest
-    container_name: mysql-db
-    restart: always
+  app:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - 8080:8080
     environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/auth
+        - SPRING_DATASOURCE_USERNAME=root
+        - SPRING_DATASOURCE_PASSWORD=password
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    ports:
+      - 3307:3306
+    environment:
+      DATABASE_HOST: docker-mysql
+      DATABASE_PORT: 3306
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: auth
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
+      MYSQL_PASSWORD: password
 
-  spring-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: spring-app
-    restart: always
-    depends_on:
-      - mysql
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: password
-      MAIL_HOST: smtp.gmail.com
-      MAIL_PORT: 587
-      MAIL_USERNAME: avishkatest123@gmail.com
-      MAIL_PASSWORD: rvhe fqfh npka kfan
-      MAIL_PROPERTIES_MAIL_SMTP_AUTH: 'true'
-      MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: 'true'
-    ports:
-      - "8080:8080"
 
-volumes:
-  mysql_data:
+

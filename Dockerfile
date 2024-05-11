@@ -1,13 +1,9 @@
-# Use OpenJDK 17 Alpine as the base image
-FROM openjdk:17-alpine
+FROM eclipse-temurin:17-jdk-alpine
+VOLUME /tmp
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
 
-# Set the working directory in the container
-WORKDIR /app
 
-# Copy the packaged jar file into the container
-COPY target/*.jar /app/app.jar
-
-# Run the jar file
-CMD ["java", "-jar", "app.jar"]
 
 
