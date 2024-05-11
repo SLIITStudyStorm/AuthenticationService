@@ -1,26 +1,37 @@
 package com.studyStorm.service;
-
 import com.studyStorm.dto.MailBody;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class EmailService {
-    private final JavaMailSender javaMailSender;
 
-    public EmailService(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
+    private final RestTemplate restTemplate;
+
+    // Define the URL of your Node.js service directly in the code
+    private static final String NODE_EMAIL_SERVICE_URL = "http://localhost:5000/send-email"; // Example URL
+
+    public EmailService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     public void sendSimpleMessage(MailBody mailBody) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(mailBody.to());
-        message.setFrom("avishkatest123@gmail.com");
-        message.setSubject(mailBody.subject());
-        message.setText(mailBody.text());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        javaMailSender.send(message);
+        // Create request body with mail details
+        HttpEntity<MailBody> request = new HttpEntity<>(mailBody, headers);
+
+        // Make POST request to Node.js service endpoint
+        ResponseEntity<Void> responseEntity = restTemplate.postForEntity(NODE_EMAIL_SERVICE_URL, request, Void.class);
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Mail sent successfully");
+        } else {
+            System.out.println("Failed to send mail. Status code: " + responseEntity.getStatusCodeValue());
+        }
     }
-
 }
