@@ -42,6 +42,7 @@ public class SecurityConfig {
                         "/v1/new",
                         "/v1/refreshToken",
                         "/v1/user/**",
+                        "/v1/users/**",
                         "/forgotPassword/**").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/v1/auth/**")
