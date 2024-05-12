@@ -13,7 +13,7 @@ public class EmailService {
     private final RestTemplate restTemplate;
 
     // Define the URL of your Node.js service directly in the code
-    private static final String NODE_EMAIL_SERVICE_URL = "http://localhost:4000/send-email";
+    private static final String NODE_EMAIL_SERVICE_URL = "http://notification-service:4000/send-email";
 
     public EmailService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
