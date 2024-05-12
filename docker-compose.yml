@@ -3,16 +3,17 @@ version: '3.8'
 services:
   app:
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - 8082:8082
     environment:
-        - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/auth
-        - SPRING_DATASOURCE_USERNAME=root
-        - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/auth
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
     depends_on:
-      - db
+      db:
+        condition: service_healthy  # Wait for the db service to be healthy before starting app
 
   db:
     image: mysql:5.7
@@ -24,6 +25,13 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: auth
       MYSQL_PASSWORD: password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]  # Health check command
+      timeout: 10s
+      retries: 5
+      interval: 5s
 
-
-
+  email-service:
+    image: notification-service
+    ports:
+      - 4000:4000
