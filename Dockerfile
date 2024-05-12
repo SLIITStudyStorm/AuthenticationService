@@ -35,7 +35,7 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar /app/app.jar
 
 # Expose the port that your application runs on
-EXPOSE 8080
+EXPOSE 8082
 
 # Define the command to run your application
 CMD ["java", "-jar", "app.jar"]
