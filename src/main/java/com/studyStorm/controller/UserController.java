@@ -99,6 +99,13 @@ public class UserController {
         return service.findByEmail(jwtService.getEmailFromToken(token));
     }
 
+    //    get user details from email
+    @GetMapping("/user/{email}")
+    // @PreAuthorize("hasAuthority('ROLE_INSTRUCTOR')")
+    public User getUserDetailsByEmail(@PathVariable String email) {
+        return service.findByEmail(email);
+    }
+
 
 
     @PostMapping("/refreshToken")
